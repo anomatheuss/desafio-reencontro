@@ -1,5 +1,5 @@
-// Base URL verificada - O backend roda na 3000
-const API_URL = 'http://localhost:3000/api';
+// Base URL verificada - O backend roda no Render
+const API_URL = 'https://reencontro-backend.onrender.com/api';
 
 // Elementos da DOM
 const grid = document.getElementById('results-grid');
