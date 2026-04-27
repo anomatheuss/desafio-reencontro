@@ -2,14 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 
-app.get("/", (req, res) => {
-  res.json({
-    status: "ok",
-    message: "API Reencontro rodando!",
-    versao: "1.0.0",
-  });
-});
-
 const routes = require("./src/routes");
 const pool = require("./src/config/database");
 
@@ -20,6 +12,13 @@ app.use(cors());
 
 // Usa express.json() para parsear o body em formato JSON
 app.use(express.json());
+app.get("/", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "API Reencontro rodando!",
+    versao: "1.0.0",
+  });
+});
 
 // Importa e usa todas as rotas definidas em /routes/index.js
 app.use(routes);
