@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reencontro - Apoio a Vítimas de Enchentes</title>
+    <!-- Ícones do FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Modernas e Limpas) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilo Customizado -->
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo"><i class="fa-solid fa-heart-pulse"></i> Reencontro</h1>
+            <p class="subtitle">Ajude-nos a conectar famílias afetadas pelas enchentes</p>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="container">
+        <!-- Área de Busca -->
+        <section class="search-section">
+            <div class="search-box">
+                <h2><i class="fa-solid fa-magnifying-glass"></i> Encontrar Alguém</h2>
+                <form id="search-form" class="search-form">
+                    <div class="input-group">
+                        <input type="text" id="search-nome" placeholder="Digite o nome da pessoa...">
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="search-local" placeholder="Filtrar por cidade ou bairro...">
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i> Buscar</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Resultados -->
+        <section class="results-section">
+            <div id="loader" class="loader hidden"></div>
+            <div id="results-grid" class="results-grid">
+                <!-- Os cards aparecerão aqui via JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Botão Flutuante (+) -->
+    <button id="fab-add" class="fab" title="Cadastrar nova pessoa desaparecida">
+        <i class="fa-solid fa-plus"></i>
+    </button>
+
+    <!-- Modal de Cadastro -->
+    <div id="modal-cadastro" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-modal="modal-cadastro">&times;</span>
+            <h2>Registrar Desaparecimento</h2>
+            <p class="text-muted" style="margin-bottom: 1.5rem;">Preencha os dados da pessoa que você não consegue localizar.</p>
+            
+            <form id="form-cadastro">
+                <div class="form-group">
+                    <label>Nome Completo *</label>
+                    <input type="text" id="cad-nome" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Idade (opcional)</label>
+                        <input type="number" id="cad-idade">
+                    </div>
+                    <div class="form-group">
+                        <label>Data Visto por Último</label>
+                        <input type="date" id="cad-data">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Local do Desaparecimento *</label>
+                    <input type="text" id="cad-local" placeholder="Ex: Bairro Centro, Canoas" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Link de uma Foto (Opcional)</label>
+                    <input type="url" id="cad-foto" placeholder="Cole o link de uma imagem da pessoa">
+                </div>
+                
+                <div class="form-group">
+                    <label>Descrição Física e Roupas</label>
+                    <textarea id="cad-descricao" rows="3" placeholder="Ex: Vestia camisa vermelha, cabelo curto..."></textarea>
+                </div>
+                
+                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Seu Nome (Contato) *</label>
+                        <input type="text" id="cad-contato-nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Seu Telefone</label>
+                        <input type="text" id="cad-contato-tel" placeholder="(00) 00000-0000">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Salvar Registro</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Detalhes -->
+    <div id="modal-detalhes" class="modal">
+        <div class="modal-content modal-lg">
+            <span class="close-btn" data-modal="modal-detalhes">&times;</span>
+            
+            <div class="detalhes-header">
+                <div>
+                    <h2 id="det-nome">Nome da Pessoa</h2>
+                    <p style="color: var(--gray); margin-top: 5px;">Procurado por: <strong id="det-contato-nome"></strong> <span id="det-contato-tel"></span></p>
+                </div>
+                <span id="det-status" class="badge">Status</span>
+            </div>
+            
+            <div class="detalhes-body">
+                <!-- Lado Esquerdo: Info da pessoa -->
+                <div class="info-panel">
+                    <h3>Dados Registrados</h3>
+                    <div class="info-item mt-3">
+                        <p><strong><i class="fa-solid fa-user"></i> Idade:</strong> <span id="det-idade"></span></p>
+                        <p><strong><i class="fa-solid fa-location-dot"></i> Visto(a) em:</strong> <span id="det-local"></span></p>
+                        <p><strong><i class="fa-regular fa-calendar"></i> Data:</strong> <span id="det-data"></span></p>
+                    </div>
+                    
+                    <div class="info-box mt-3">
+                        <strong>Descrição Física:</strong>
+                        <p id="det-descricao"></p>
+                    </div>
+                    
+                    <button id="btn-encontrado" class="btn btn-success btn-block mt-3 hidden">
+                        <i class="fa-solid fa-circle-check"></i> Anunciar como ENCONTRADO
+                    </button>
+                </div>
+                
+                <!-- Lado Direito: Avistamentos e Form -->
+                <div class="avistamentos-panel">
+                    <h3>Registros de Avistamentos</h3>
+                    <div id="avistamentos-list" class="avistamentos-list">
+                        <!-- Lista JS -->
+                    </div>
+                    
+                    <div id="form-avistamento-container" class="nova-info-box">
+                        <h4><i class="fa-solid fa-eye"></i> Você viu essa pessoa?</h4>
+                        <p style="font-size: 0.85rem; margin-bottom: 1rem;">Seja solidário e informe o máximo de detalhes.</p>
+                        
+                        <form id="form-avistamento">
+                            <input type="hidden" id="avi-pessoa-id">
+                            
+                            <div class="form-group">
+                                <label>Onde você viu? *</label>
+                                <input type="text" id="avi-local" required>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Quando? *</label>
+                                    <input type="datetime-local" id="avi-data" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Mais detalhes</label>
+                                <textarea id="avi-descricao" rows="2" placeholder="Descreva a situação..."></textarea>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Seu Nome</label>
+                                    <input type="text" id="avi-nome">
+                                </div>
+                                <div class="form-group">
+                                    <label>Seu Telefone</label>
+                                    <input type="text" id="avi-tel">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-secondary btn-block">Enviar Informação</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Notificação -->
+    <div id="toast" class="toast">Mensagem do sistema</div>
+
+    <script src="./js/app.js?v=5"></script>
+</body>
+</html>
